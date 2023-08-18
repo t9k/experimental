@@ -6,7 +6,7 @@ spec:
   replicas: 1
   scheduler:
     t9kScheduler:
-      queue: mlperf
+      queue: default
   storage:
     s3:
       secretName: llama-7b

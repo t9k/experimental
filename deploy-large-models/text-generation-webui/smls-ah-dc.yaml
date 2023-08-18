@@ -6,7 +6,7 @@ spec:
   replicas: 1
   scheduler:
     t9kScheduler:
-      queue: mlperf
+      queue: default
   storage:
     pvc:
       name: vicuna-7b

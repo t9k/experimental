@@ -6,7 +6,7 @@ spec:
   replicas: 1
   scheduler:
     t9kScheduler:
-      queue: mlperf
+      queue: default
   storage:
     pvc:
       name: chatglm2-6b
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: tsz.io/xyx/fastchat-openai:20230628
+        image: t9kpublic/fastchat-openai:20230628
         args:
           - "./chatglm2-6b"
         ports:

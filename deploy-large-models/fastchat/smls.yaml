@@ -1,31 +1,31 @@
 apiVersion: tensorstack.dev/v1beta1
 kind: SimpleMLService
 metadata:
-  name: huggingface-text-generation-inference
+  name: fastchat-openai
 spec:
   replicas: 1
   scheduler:
     t9kScheduler:
       queue: default
   storage:
-    s3:
-      secretName: llama-7b
-      uri: s3://e5522e58-42fa-4190-83de-27aea05bf60b/main/
+    pvc:
+      name: chatgpt
+      subPath: chatglm2-6b
+      containerPath: /workspace/chatglm2-6b
   service:
     type: NodePort
     ports:
-    - targetPort: 80
-      port: 8080
+    - targetPort: 8000
+      port: 8000
   custom:
     spec:
       containers:
       - name: server
-        image: ghcr.io/huggingface/text-generation-inference:0.8
+        image: t9kpublic/fastchat-openai:20230628
         args:
-        - --model-id=/var/lib/t9k/model
-        - --num-shard=1
+          - "./chatglm2-6b"
         ports:
-        - containerPort: 80
+        - containerPort: 8000
         resources:
           limits:
             cpu: 4

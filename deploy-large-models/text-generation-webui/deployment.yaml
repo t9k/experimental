@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-generation-webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: text-generation-webui
+  template:
+    metadata:
+      labels:
+        app: text-generation-webui
+    spec:
+      nodeName: sm02
+      containers:
+      - name: server
+        image: tsz.io/xyx/text-generation-webui:20230616
+        args:
+          - --chat
+          - --listen
+        ports:
+          - containerPort: 7860
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - mountPath: /workspace/text-generation-webui/models/vicuna-7b
+            name: data
+            subPath: vicuna-7b
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: chat
+        - name: dshm
+          emptyDir:
+            medium: Memory

@@ -1,0 +1,51 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: stable-diffusion-webui
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  service:
+    type: NodePort
+    ports:
+    - targetPort: 7860
+      port: 7860
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: tsz.io/xyx/stable-diffusion-webui:aki-v4
+        args:
+          - --skip-install
+          - --listen
+        ports:
+        - containerPort: 7860
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - mountPath: /workspace/sd-webui-aki-v4/models/Stable-diffusion
+            name: data
+            subPath: sd
+          - mountPath: /workspace/sd-webui-aki-v4/models/VAE
+            name: data
+            subPath: vae
+          - mountPath: /workspace/sd-webui-aki-v4/models/Lora
+            name: data
+            subPath: lora
+          - mountPath: /workspace/sd-webui-aki-v4/outputs
+            name: data
+            subPath: outputs
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: draw
+        - name: dshm
+          emptyDir:
+            medium: Memory

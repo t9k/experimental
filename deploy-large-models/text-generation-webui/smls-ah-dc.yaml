@@ -1,0 +1,40 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: text-generation-webui
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  storage:
+    pvc:
+      name: vicuna-7b
+      containerPath: /workspace/text-generation-webui/models/vicuna-7b
+  service:
+    type: NodePort
+    ports:
+    - targetPort: 7860
+      port: 7860
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: tsz.io/xyx/text-generation-webui:20230616
+        args:
+          - --chat
+          - --listen
+        ports:
+        - containerPort: 7860
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory

@@ -1,0 +1,42 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: huggingface-pipeline-webserver
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  storage:
+    pvc:
+      name: llama-7b
+      containerPath: /var/lib/custom
+  service:
+    type: NodePort
+    ports:
+    - targetPort: 8000
+      port: 8000
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: tsz.io/xyx/pipeline-webserver:20230616
+        args:
+          - --host=0.0.0.0
+        env:
+          - name: MODEL_PATH
+            value: "/var/lib/custom"
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory

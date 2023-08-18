@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triton-huggingface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: triton-huggingface
+  template:
+    metadata:
+      labels:
+        app: triton-huggingface
+    spec:
+      nodeName: sm02
+      containers:
+      - name: server
+        image: tsz.io/xyx/triton-huggingface:test-v1
+        ports:
+          - containerPort: 8000
+        resources:
+          limits:
+            cpu: 2
+            memory: 16Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - mountPath: /data/vit-base-patch16-224-in21k
+            name: data
+            subPath: vit-base-patch16-224-in21k
+          - mountPath: /models
+            name: data
+            subPath: python_model_repository
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: draw
+        - name: dshm
+          emptyDir:
+            medium: Memory

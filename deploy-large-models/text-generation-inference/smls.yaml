@@ -1,0 +1,41 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: huggingface-text-generation-inference
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  storage:
+    pvc:
+      name: chat
+      subPath: llama-7b
+      containerPath: /workspace/llama-7b
+  service:
+    type: ClusterIP
+    ports:
+    - targetPort: 80
+      port: 8080
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: ghcr.io/huggingface/text-generation-inference:0.8
+        ports:
+        - containerPort: 80
+        args:
+        - --model-id=/workspace/llama-7b
+        - --num-shard=1
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory

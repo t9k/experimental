@@ -1,0 +1,44 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: invoke-ai
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  service:
+    type: NodePort
+    ports:
+    - targetPort: 9090
+      port: 9090
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: tsz.io/xyx/invoke-ai:20230705
+        env:  # in case 'Connection timed out'
+          - name: http_proxy
+            value: "http://k01.corp.tensorstack.net:3128"
+          - name: https_proxy
+            value: "http://k01.corp.tensorstack.net:3128"
+        ports:
+        - containerPort: 9090
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - mountPath: /workspace/invokeai
+            name: data
+            subPath: invokeai
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: draw
+        - name: dshm
+          emptyDir:
+            medium: Memory

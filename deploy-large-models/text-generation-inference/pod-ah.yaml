@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: huggingface-text-generation-inference
+  labels:
+    app: huggingface-text-generation-inference
+spec:
+  nodeName: sm02
+  containers:
+  - name: server
+    image: ghcr.io/huggingface/text-generation-inference:0.8
+    ports:
+      - containerPort: 80
+    args:
+      - --model-id=/data/llama-7b
+      - --num-shard=1
+    resources:
+      limits:
+        cpu: 4
+        memory: 64Gi
+        nvidia.com/gpu: 1
+    volumeMounts:
+      - mountPath: /data/llama-7b
+        name: data
+      - mountPath: /dev/shm
+        name: dshm
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: llama-7b
+    - name: dshm
+      emptyDir:
+        medium: Memory

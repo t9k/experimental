@@ -12,7 +12,7 @@ spec:
       name: llama-7b
       containerPath: /var/lib/custom
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 8000
       port: 8000

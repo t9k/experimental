@@ -12,7 +12,7 @@ spec:
       secretName: llama-7b
       uri: s3://e5522e58-42fa-4190-83de-27aea05bf60b/main/
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 80
       port: 8080

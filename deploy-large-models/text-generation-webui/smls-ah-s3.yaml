@@ -13,7 +13,7 @@ spec:
       uri: s3://aad7b3c6-94b3-4884-8c11-2c5332b2efb6/main/
       containerPath: /workspace/text-generation-webui/models/vicuna-7b
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 7860
       port: 7860

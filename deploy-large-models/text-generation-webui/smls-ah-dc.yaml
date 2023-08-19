@@ -12,7 +12,7 @@ spec:
       name: vicuna-7b
       containerPath: /workspace/text-generation-webui/models/vicuna-7b
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 7860
       port: 7860

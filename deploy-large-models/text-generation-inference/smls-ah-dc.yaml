@@ -12,7 +12,7 @@ spec:
       name: llama-7b
       containerPath: /workspace/llama-7b
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 80
       port: 8080

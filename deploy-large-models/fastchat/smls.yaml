@@ -13,7 +13,7 @@ spec:
       subPath: chatglm2-6b
       containerPath: /workspace/chatglm2-6b
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
     - targetPort: 8000
       port: 8000

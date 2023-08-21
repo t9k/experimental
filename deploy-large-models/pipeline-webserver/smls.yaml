@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: tsz.io/xyx/pipeline-webserver:20230616
+        image: t9kpublic/pipeline-webserver:20230616
         args:
           - --host=0.0.0.0
         env:

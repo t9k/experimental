@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: tsz.io/xyx/triton-huggingface:test-v1
+        image: t9kpublic/triton-huggingface:test-v1
         ports:
         - containerPort: 8000
         resources:

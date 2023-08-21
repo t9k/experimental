@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: tsz.io/xyx/text-generation-webui:20230616
+        image: t9kpublic/text-generation-webui:20230616
         args:
           - --chat
           - --listen

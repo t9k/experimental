@@ -1,0 +1,40 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: fastchat-openai
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: default
+  storage:
+    pvc:
+      name: chatgpt
+      subPath: Llama-2-7b-chat-hf
+      containerPath: /workspace/llama2-7b-chat
+  service:
+    type: ClusterIP
+    ports:
+    - targetPort: 8000
+      port: 8000
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: t9kpublic/fastchat-openai:20230628
+        args:
+          - "./llama2-7b-chat"
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory

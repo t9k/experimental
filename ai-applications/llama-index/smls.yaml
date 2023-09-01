@@ -1,0 +1,47 @@
+apiVersion: tensorstack.dev/v1beta1
+kind: SimpleMLService
+metadata:
+  name: llama-index-qa
+spec:
+  replicas: 1
+  scheduler:
+    t9kScheduler:
+      queue: mlperf
+  service:
+    type: ClusterIP
+    ports:
+    - targetPort: 8000
+      port: 8000
+  custom:
+    spec:
+      containers:
+      - name: server
+        image: tsz.io/xyx/llama-index-qa:20230901
+        args:
+          - --host=0.0.0.0
+        ports:
+          - containerPort: 8000
+        env:
+          - name: MODEL_PATH
+            value: ./Baichuan-13B-Chat
+        resources:
+          limits:
+            cpu: 4
+            memory: 64Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - mountPath: /workspace/Baichuan-13B-Chat
+            name: data
+            subPath: Baichuan-13B-Chat
+          - mountPath: /workspace/all-mpnet-base-v2
+            name: data
+            subPath: all-mpnet-base-v2
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: chat
+        - name: dshm
+          emptyDir:
+            medium: Memory

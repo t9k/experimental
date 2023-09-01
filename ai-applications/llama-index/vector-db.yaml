@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: qdrant-db
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: qdrant-db
+ template:
+   metadata:
+     labels:
+       app: qdrant-db
+   spec:
+     containers:
+     - name: server
+       image: qdrant/qdrant
+       ports:
+         - containerPort: 6333
+       resources:
+         limits:
+           cpu: 1
+           memory: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant-db
+spec:
+  selector:
+    app: qdrant-db
+  ports:
+    - protocol: TCP
+      port: 6333
+      targetPort: 6333
